@@ -45,6 +45,7 @@ def allowed_file(filename):
 # --- ルート定義 ---
 @app.route('/')
 def index():
+    init_db()  # アクセスされた時にテーブルがなければ作るようにします
     search_size = request.args.get('search_size')
     conn = get_db_connection()
     if search_size:
