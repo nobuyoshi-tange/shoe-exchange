@@ -98,5 +98,10 @@ def error_413(e):
 if __name__ == '__main__':
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
     init_db()
-    app.run(debug=True)
+    
+    # Renderなどの環境では、環境変数 PORT を使って起動する必要があります
+    # なければ 5000 番を使います
+    port = int(os.environ.get("PORT", 5000))
+    # 0.0.0.0 は「外部からの接続をすべて許可する」設定です
+    app.run(host="0.0.0.0", port=port)
     
