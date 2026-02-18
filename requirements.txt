@@ -1,5 +1,4 @@
-Plaintext
-
 flask
 flask-wtf
+
 gunicorn
