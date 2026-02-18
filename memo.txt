@@ -1,0 +1,8 @@
+project_folder/
+│  app.py
+│  database.db (自動生成されます)
+│  requirements.txt
+├─static/
+│  └─uploads/ (画像が保存されます)
+└─templates/
+   └─index.html

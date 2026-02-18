@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>片足靴交換マッチング</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f7f6; }
+        .card-img-left { width: 100%; height: 200px; object-fit: cover; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+        <div class="container"><a class="navbar-brand" href="/">👟 片足交換コミュニティ</a></div>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card shadow-sm p-3 mb-4">
+                    <h5>出品・募集する</h5>
+                    <form action="/post" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="text" name="category" class="form-control mb-2" placeholder="靴の種類" required>
+                        <input type="text" name="brand" class="form-control mb-2" placeholder="ブランド" required>
+                        
+                        <div class="row g-2 mb-2">
+                            <div class="col"><label class="small">【提供】</label>
+                                <select name="current_side" class="form-select"><option>左</option><option>右</option></select>
+                                <input type="text" name="current_size" class="form-control mt-1" placeholder="cm" required>
+                            </div>
+                            <div class="col"><label class="small">【希望】</label>
+                                <select name="wanted_side" class="form-select"><option>左</option><option>右</option></select>
+                                <input type="text" name="wanted_size" class="form-control mt-1" placeholder="cm" required>
+                            </div>
+                        </div>
+
+                        <input type="text" name="condition" class="form-control mb-2" placeholder="状態(例: 室内試着のみ)">
+                        <input type="file" name="image" class="form-control mb-2" accept="image/*">
+                        <textarea name="description" class="form-control mb-3" placeholder="備考・連絡先など" rows="3"></textarea>
+                        <button type="submit" class="btn btn-primary w-100">投稿する</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="d-flex justify-content-between mb-3">
+                    <h3>募集一覧</h3>
+                    <form action="/" method="get" class="d-flex gap-2">
+                        <input type="text" name="search_size" class="form-control form-control-sm" placeholder="希望サイズ検索" value="{{ search_size or '' }}">
+                        <button type="submit" class="btn btn-secondary btn-sm">検索</button>
+                    </form>
+                </div>
+
+                {% for post in posts %}
+                <div class="card mb-3 shadow-sm overflow-hidden">
+                    <div class="row g-0">
+                        <div class="col-md-4 bg-light text-center">
+                            {% if post.image %}
+                                <img src="{{ url_for('static', filename='uploads/' + post.image) }}" class="card-img-left">
+                            {% else %}
+                                <div class="py-5 text-muted">No Image</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h5 class="card-title">{{ post.brand }} <small class="text-muted">({{ post.category }})</small></h5>
+                                    <span class="badge {{ 'bg-success' if post.status == '募集中' else 'bg-secondary' }}">{{ post.status }}</span>
+                                </div>
+                                <div class="row bg-light rounded p-2 my-2 mx-0">
+                                    <div class="col"><strong>譲:</strong> {{ post.current_side }}{{ post.current_size }}cm</div>
+                                    <div class="col text-danger"><strong>求:</strong> {{ post.wanted_side }}{{ post.wanted_size }}cm</div>
+                                </div>
+                                <p class="card-text mb-1"><small>状態: {{ post.condition }}</small></p>
+                                <p class="card-text small text-secondary">{{ post.description }}</p>
+                                {% if post.status == '募集中' %}
+                                    <a href="{{ url_for('complete', post_id=post.id) }}" class="btn btn-sm btn-outline-success">交換成立にする</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
