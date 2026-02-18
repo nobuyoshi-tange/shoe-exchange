@@ -1,1 +1,5 @@
-requirements.txt
+Plaintext
+
+flask
+flask-wtf
+gunicorn
